@@ -1,0 +1,46 @@
+package com.nermali.demo.service;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.nermali.demo.controller.ContactCreateRequest;
+import com.nermali.demo.model.Contact;
+import com.nermali.demo.repository.ContactRepository;
+
+@ExtendWith(MockitoExtension.class)
+public class ContactServiceTest {
+
+    @Mock
+    private ContactRepository contactRepository;
+    @InjectMocks
+    private ContactService contactService;
+
+    @Test
+    public void shouldSaveContact() {
+        // arrange
+        ContactCreateRequest contactCreateRequest = new ContactCreateRequest();
+        contactCreateRequest.setName("John Doe");
+        contactCreateRequest.setZipCode("12345");
+        contactCreateRequest.setCity("Springfield");
+        contactCreateRequest.setNumber("1234567890");
+        ArgumentCaptor<Contact> contactArgumentCaptor = ArgumentCaptor.forClass(Contact.class);
+        when(contactRepository.save(contactArgumentCaptor.capture())).thenReturn(new Contact());
+
+        // act
+        contactService.save(contactCreateRequest);
+
+        // assert
+        Contact contact = contactArgumentCaptor.getValue();
+        assertThat(contact.getName()).isEqualTo("John Doe");
+        assertThat(contact.getZipCode()).isEqualTo("12345");
+        assertThat(contact.getCity()).isEqualTo("Springfield");
+        assertThat(contact.getNumber()).isEqualTo("1234567890");
+    }
+}
